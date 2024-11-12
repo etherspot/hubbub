@@ -37,10 +37,10 @@ export default function ScanScreen(props) {
           console.log(result.data);
           setProcessingScan(true);
           try {
-            const handshakeAbi = ['function handshake(address other), function scores(address user)'];
+            const handshakeAbi = ['function handshake(address other)'];
             const hc = new Interface(handshakeAbi)
             await sdk.addUserOpsToBatch({to: '0x000EC40DE1451c144CaDa5e6588788295161b002', data: hc.encodeFunctionData('handshake', [result.data])});
-            const estimate = await sdk.estimate({paymasterDetails: { url: `https://arka.etherspot.io?apiKey=devVignesh&chainId=80002`, context: { mode: 'sponsor' } }})
+            const estimate = await sdk.estimate({paymasterDetails: { url: `https://arka.etherspot.io?apiKey=${process.env.REACT_APP_ARKA_KEY}&chainId=80002`, context: { mode: 'sponsor' } }})
             console.log('estimate: ', estimate);
             console.log('submit: ', await sdk.send(estimate));
             const returnObj = await getScore(address);
