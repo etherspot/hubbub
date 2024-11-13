@@ -54,20 +54,11 @@ export default function ScanScreen(props) {
             }
             const handshakeAbi = ['function handshake(address other)', 'function register()'];
             const hc = new Interface(handshakeAbi);
-            await sdk.addUserOpsToBatch({to: '0xbF3bB56D80bAA76d67d1FbDeA92377db5B586CF1', data: hc.encodeFunctionData('handshake', [])})
             await sdk.addUserOpsToBatch({to: '0xbF3bB56D80bAA76d67d1FbDeA92377db5B586CF1', data: hc.encodeFunctionData('handshake', [result.data])});
             const estimate = await sdk.estimate({paymasterDetails: { url: `https://arka.etherspot.io?apiKey=${process.env.REACT_APP_ARKA_KEY}&chainId=42161`, context: { mode: 'sponsor' } }})
             console.log('estimate: ', estimate);
             const submit = await sdk.send(estimate)
             console.log('submit: ', submit);
-            console.log('Waiting for transaction...');
-            let userOpsReceipt = null;
-            const timeout = Date.now() + 120000; // 2 minute timeout
-            while((userOpsReceipt == null) && (Date.now() < timeout)) {
-              await sleep(2);
-              userOpsReceipt = await sdk.getUserOpReceipt(submit);
-            }
-            console.log('\x1b[33m%s\x1b[0m', `Transaction Receipt: `, userOpsReceipt);
             
             const returnObj = await getScore(address);
             console.log('result: ', returnObj.toString())

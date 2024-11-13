@@ -19,14 +19,6 @@ const CollectionGameContainer = (props) => {
   const openQrCodeModal = () => setShowQrCodeModal(true);
   const closeQrCodeModal = () => setShowQrCodeModal(false);
 
-  useEffect(() => {
-    const introLoaded = localStorage.getItem("introLoaded");
-    if (!introLoaded) {
-      openIntroModal();
-      localStorage.setItem("introLoaded", "true");
-    }
-  }, []);
-
   return (
     <React.Fragment>
       <Router>
