@@ -16,11 +16,8 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
 import styled from "styled-components";
-import Card from "react-bootstrap/Card";
 import Spacing from "../Spacing";
 import { limit, query, collection, orderBy, getDocs, getFirestore } from "firebase/firestore";
-import ItemList from "../Home/ItemList";
-import { useSdk } from "../../hooks/etherspotSdk";
 
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -177,15 +174,3 @@ const InfoContainer = styled.div`
   padding: 0 1rem;
 `;
 
-const Title = styled.p`
-  font-size: 2rem;
-  font-weight: 600;
-  margin: 1rem;
-  text-align: center;
-`;
-
-const StyledCard = styled(Card)`
-  // p {
-  //   text-align: center;
-  // }
-`;

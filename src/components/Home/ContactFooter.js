@@ -4,8 +4,6 @@ import Col from "react-bootstrap/Col";
 import styled from "styled-components";
 import { FaTelegram } from "react-icons/fa";
 
-import { baseColors } from "../../styles/colors";
-
 const ContactFooter = () => {
   return <ContactContainer>
     <Row>

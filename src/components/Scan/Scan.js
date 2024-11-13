@@ -54,9 +54,9 @@ export default function ScanScreen(props) {
             }
             const handshakeAbi = ['function handshake(address other)', 'function register()'];
             const hc = new Interface(handshakeAbi);
-            // await sdk.addUserOpsToBatch({to: '0x7178930eE40510501fe312DfCd2a689dF93913A4', data: hc.encodeFunctionData('handshake', [])})
-            await sdk.addUserOpsToBatch({to: '0x7178930eE40510501fe312DfCd2a689dF93913A4', data: hc.encodeFunctionData('handshake', [result.data])});
-            const estimate = await sdk.estimate({paymasterDetails: { url: `https://arka.etherspot.io?apiKey=${process.env.REACT_APP_ARKA_KEY}&chainId=80002`, context: { mode: 'sponsor' } }})
+            await sdk.addUserOpsToBatch({to: '0xbF3bB56D80bAA76d67d1FbDeA92377db5B586CF1', data: hc.encodeFunctionData('handshake', [])})
+            await sdk.addUserOpsToBatch({to: '0xbF3bB56D80bAA76d67d1FbDeA92377db5B586CF1', data: hc.encodeFunctionData('handshake', [result.data])});
+            const estimate = await sdk.estimate({paymasterDetails: { url: `https://arka.etherspot.io?apiKey=${process.env.REACT_APP_ARKA_KEY}&chainId=42161`, context: { mode: 'sponsor' } }})
             console.log('estimate: ', estimate);
             const submit = await sdk.send(estimate)
             console.log('submit: ', submit);
@@ -77,10 +77,6 @@ export default function ScanScreen(props) {
               score: Number(returnObj.toString()),
               addresses: data[0].addresses.push(result.data),
             })
-            // const q = query(collection(db, "handshake"), orderBy("count", "desc"));
-            // const data1 = await getDocs(q);
-            // let sortedOne = data1.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-            // console.log('sortedOne: ', sortedOne)
             navigate("/");
             setProcessingScan(false);
           } catch (err) {

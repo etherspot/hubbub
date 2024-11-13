@@ -60,11 +60,7 @@ const FooterBar = ({ onOpenIntroModal, onOpenQrCodeModal }) => {
           <IconButton
             color="inherit"
             onClick={() =>
-              onNavigate(
-                `/?world=${localStorage.getItem(
-                  "world"
-                )}&playerId=${localStorage.getItem("playerId")}`
-              )
+              onNavigate(`/`)
             }
           >
             <GameIcon />

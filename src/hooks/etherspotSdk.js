@@ -1,4 +1,4 @@
-import { PrimeSdk, ArkaPaymaster } from '@etherspot/prime-sdk';
+import { PrimeSdk, ArkaPaymaster, EtherspotBundler } from '@etherspot/prime-sdk';
 import { Contract, JsonRpcProvider } from 'ethers';
 
 let isInitialised = false;
@@ -13,12 +13,13 @@ const initialiseSdk = async (provider) => {
     console.log('Not authenticated anonymously, starting...')
 
     sdk = new PrimeSdk(provider, {
-      chainId: 80002
+      chainId: 42161,
+      bundlerProvider: new EtherspotBundler(42161, 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjllMTlkOGM4YWIxNzQyNTQ4NGVkYzI5YmQyYWYwZjJlIiwiaCI6Im11cm11cjEyOCJ9')
     });
     address = await sdk.getCounterFactualAddress();
     console.log('address: ', address);
     isInitialised = true;
-    arkaSdk = new ArkaPaymaster('80002', process.env.REACT_APP_ARKA_KEY, 'https://arka.etherspot.io');
+    arkaSdk = new ArkaPaymaster('42161', process.env.REACT_APP_ARKA_KEY, 'https://arka.etherspot.io');
     const isWhitelisted = await arkaSdk.checkWhitelist(address);
     console.log(isWhitelisted);
     if (isWhitelisted !== 'Already added') {
@@ -42,8 +43,8 @@ const getAddress = async () => {
 }
 
 const getScore = async (address) => {
-  const provider = new JsonRpcProvider('https://testnet-rpc.etherspot.io/v1/80002', {chainId: 80002, name: 'Connected Bundler'});
-  const contract = new Contract('0xF34fEBDCc36D7246498C56bEfc10bE5dC694C494', abi, provider);
+  const provider = new JsonRpcProvider(`https://rpc.etherspot.io/v1/42161?api-key=eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjllMTlkOGM4YWIxNzQyNTQ4NGVkYzI5YmQyYWYwZjJlIiwiaCI6Im11cm11cjEyOCJ9}`, {chainId: 42161, name: 'Connected Bundler'});
+  const contract = new Contract('0xbF3bB56D80bAA76d67d1FbDeA92377db5B586CF1', abi, provider);
   score = await contract.scores(address);
   return score;
 }
