@@ -25,7 +25,7 @@ const ItemCard = styled(Card)`
 `;
 
 const ItemTitle = styled(Card.Title)`
-  text-align: center;
+  text-align: centre;
 `;
 
 const ItemBody = styled(Card.Body)``;

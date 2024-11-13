@@ -14,6 +14,7 @@ import Fab from "@mui/material/Fab";
 import QrScannerIcon from "@mui/icons-material/QrCodeScanner";
 import GameIcon from "@mui/icons-material/VideogameAsset";
 import { Logout } from "@mui/icons-material";
+import TrophyIcon from "@mui/icons-material/EmojiEvents";
 
 
 const FooterBar = ({ onOpenIntroModal, onOpenQrCodeModal }) => {
@@ -37,6 +38,9 @@ const FooterBar = ({ onOpenIntroModal, onOpenQrCodeModal }) => {
       sx={{ top: "auto", bottom: 0, justifyContent: "center" }}
     >
       <Toolbar>
+      <IconButton color="inherit" onClick={() => onNavigate("/prizes")}>
+          <TrophyIcon />
+        </IconButton>
         <Link to={"/scan"}>
           <StyledFab color="secondary">
             <QrScannerIcon />

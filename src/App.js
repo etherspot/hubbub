@@ -6,15 +6,13 @@ import styled from "styled-components";
 import qs from "qs";
 import { ReactComponent as AAHubSvg } from "./assets/icons/AA-community-hub-logo.svg";
 import Spacing from "./components/Spacing";
-import { LinearProgress, Typography } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import SignIn from './components/SignIn';
 import { useFirebase } from "./hooks/firebase";
-import { useSdk } from "./hooks/etherspotSdk";
 
 function App() {
   // const { ready, authenticated, user, login, logout } = usePrivy();
   const { initialiseFirebase } = useFirebase();
-  const { score, isInitialised } = useSdk();
 
   const query = qs.parse(window.location.search.substring(1));
 
@@ -43,10 +41,6 @@ function App() {
           :
           <SignIn />
           }
-          { isInitialised ? <Typography variant='h6'>
-            Score: {isInitialised ? score : 0}
-          </Typography> : <></> }
-          
         </LoadingContainer>
     </div>
   );
@@ -58,8 +52,8 @@ const LoadingContainer = styled.div`
 `;
 
 const StyledAAHubSvg = styled(AAHubSvg)`
-  width: 25rem;
-  height: 25rem;
+  width: 20rem;
+  height: 20rem;
   margin-bottom: 15px;
 `;
 

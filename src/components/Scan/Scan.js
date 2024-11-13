@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from "react";
 import QrScanner from "qr-scanner";
 import styled from "styled-components";
@@ -6,12 +7,13 @@ import Spacer from "../Spacing";
 import Spinner from "react-bootstrap/Spinner";
 
 import { useSdk } from "../../hooks/etherspotSdk";
+import { sleep } from "@etherspot/prime-sdk/dist/sdk/common";
 import { Interface } from 'ethers';
-import { collection, doc, getDocs, getFirestore, updateDoc, where } from "firebase/firestore";
+import { collection, doc, getDocs, getFirestore, updateDoc, where, query } from "firebase/firestore";
 
 
 export default function ScanScreen(props) {
-  const { address, sdk, getScore } = useSdk();
+  const { address, sdk, getScore, checkWhitelist } = useSdk();
   const db = getFirestore();
   let isProcessing = useRef(false);
   const navigate = useNavigate();
@@ -37,23 +39,43 @@ export default function ScanScreen(props) {
           console.log(result.data);
           setProcessingScan(true);
           try {
-            const handshakeAbi = ['function handshake(address other)'];
-            const hc = new Interface(handshakeAbi)
-            await sdk.addUserOpsToBatch({to: '0x000EC40DE1451c144CaDa5e6588788295161b002', data: hc.encodeFunctionData('handshake', [result.data])});
-            const estimate = await sdk.estimate({paymasterDetails: { url: `https://arka.etherspot.io?apiKey=${process.env.REACT_APP_ARKA_KEY}&chainId=80002`, context: { mode: 'sponsor' } }})
-            console.log('estimate: ', estimate);
-            console.log('submit: ', await sdk.send(estimate));
-            const returnObj = await getScore(address);
-            console.log('result: ', returnObj)
-            
-            const docRef = await getDocs(collection(db, "handshake"), where('etherspotAddress', '==', address))
+            await checkWhitelist();
+            await sleep(2);
+            console.log(address);
+            const q = query(collection(db, "handshake"), where('etherspotAddress', '==', address));
+            const docRef = await getDocs(q)
             let data = docRef.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
             console.log('data: : ', data)
+            if (data[0].addresses.includes(result.data)) {
+              alert('The handshake has already been made before');
+              setProcessingScan(false);
+              navigate('/');
+              return;
+            }
+            const handshakeAbi = ['function handshake(address other)', 'function register()'];
+            const hc = new Interface(handshakeAbi);
+            // await sdk.addUserOpsToBatch({to: '0x7178930eE40510501fe312DfCd2a689dF93913A4', data: hc.encodeFunctionData('handshake', [])})
+            await sdk.addUserOpsToBatch({to: '0x7178930eE40510501fe312DfCd2a689dF93913A4', data: hc.encodeFunctionData('handshake', [result.data])});
+            const estimate = await sdk.estimate({paymasterDetails: { url: `https://arka.etherspot.io?apiKey=${process.env.REACT_APP_ARKA_KEY}&chainId=80002`, context: { mode: 'sponsor' } }})
+            console.log('estimate: ', estimate);
+            const submit = await sdk.send(estimate)
+            console.log('submit: ', submit);
+            console.log('Waiting for transaction...');
+            let userOpsReceipt = null;
+            const timeout = Date.now() + 120000; // 2 minute timeout
+            while((userOpsReceipt == null) && (Date.now() < timeout)) {
+              await sleep(2);
+              userOpsReceipt = await sdk.getUserOpReceipt(submit);
+            }
+            console.log('\x1b[33m%s\x1b[0m', `Transaction Receipt: `, userOpsReceipt);
+            
+            const returnObj = await getScore(address);
+            console.log('result: ', returnObj.toString())
             const colRef = new doc(db, "handshake", data[0].id);
             await updateDoc(colRef, {
               ...data[0],
+              score: Number(returnObj.toString()),
               addresses: data[0].addresses.push(result.data),
-              verified: false,
             })
             // const q = query(collection(db, "handshake"), orderBy("count", "desc"));
             // const data1 = await getDocs(q);
@@ -63,7 +85,7 @@ export default function ScanScreen(props) {
             setProcessingScan(false);
           } catch (err) {
             console.log(err);
-            alert("Already handshaked/Please try again");
+            alert("Please try again");
             navigate("/")
             setProcessingScan(false);
             qrScanner.stop();
