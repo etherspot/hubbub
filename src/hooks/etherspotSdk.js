@@ -1,5 +1,5 @@
 import { PrimeSdk, ArkaPaymaster, EtherspotBundler } from '@etherspot/prime-sdk';
-import { Contract, JsonRpcProvider } from 'ethers';
+import { Contract, providers } from 'ethers';
 
 let isInitialised = false;
 let sdk = null;
@@ -43,11 +43,9 @@ const getAddress = async () => {
 }
 
 const getScore = async (address) => {
-  const provider = new JsonRpcProvider(`https://rpc.etherspot.io/v1/42161?api-key=eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6Ijk4NjVhZTdiOTUzYTRhY2U4OTllZWY5NjVlZWE1ZDY2IiwiaCI6Im11cm11cjEyOCJ9`);
+  const provider = new providers.JsonRpcProvider(`https://rpc.etherspot.io/v1/42161?api-key=eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6Ijk4NjVhZTdiOTUzYTRhY2U4OTllZWY5NjVlZWE1ZDY2IiwiaCI6Im11cm11cjEyOCJ9`);
   const contract = new Contract('0xbF3bB56D80bAA76d67d1FbDeA92377db5B586CF1', abi, provider);
   score = await contract.scores(address);
-  const handshakes = await contract.getHandshakes(address);
-  console.log(handshakes);
   return score;
 }
 

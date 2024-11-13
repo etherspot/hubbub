@@ -8,7 +8,7 @@ import Spinner from "react-bootstrap/Spinner";
 
 import { useSdk } from "../../hooks/etherspotSdk";
 import { sleep } from "@etherspot/prime-sdk/dist/sdk/common";
-import { Interface } from 'ethers';
+import { ethers } from 'ethers';
 import { collection, doc, getDocs, getFirestore, updateDoc, where, query } from "firebase/firestore";
 
 
@@ -53,7 +53,7 @@ export default function ScanScreen(props) {
               return;
             }
             const handshakeAbi = ['function handshake(address other)', 'function register()'];
-            const hc = new Interface(handshakeAbi);
+            const hc = new ethers.utils.Interface(handshakeAbi);
             await sdk.addUserOpsToBatch({to: '0xbF3bB56D80bAA76d67d1FbDeA92377db5B586CF1', data: hc.encodeFunctionData('handshake', [result.data])});
             const estimate = await sdk.estimate({paymasterDetails: { url: `https://arka.etherspot.io?apiKey=${process.env.REACT_APP_ARKA_KEY}&chainId=42161`, context: { mode: 'sponsor' } }})
             console.log('estimate: ', estimate);
